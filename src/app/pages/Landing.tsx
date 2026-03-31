@@ -24,17 +24,15 @@ export function Landing() {
         <div style={{ maxWidth: 860, margin: "0 auto", textAlign: "center" }}>
           <div style={{ display: "inline-flex", alignItems: "center", gap: 8, padding: "5px 14px", background: "#fdf2f3", border: "1px solid #f0c4c6", borderRadius: 20, marginBottom: 28 }}>
             <Shield size={13} color="#af1d27" />
-            <span style={{ fontSize: 12, color: "#7f1118", fontWeight: 500 }}>Simulated patient encounters — structured clinical communication training</span>
+            <span style={{ fontSize: 12, color: "#7f1118", fontWeight: 500 }}>Simulated patient encounters - structured clinical communication training</span>
           </div>
 
           <h1 style={{ fontFamily: "var(--font-serif)", fontSize: 46, fontWeight: 600, color: "#1a1a1a", letterSpacing: "-0.02em", lineHeight: 1.15, marginBottom: 20 }}>
-            Learn to talk with
-            <br />
-            <span style={{ color: "#af1d27" }}>your patients</span>
+            Let's learn medicine with the chatbot
           </h1>
 
           <p style={{ fontSize: 17, color: "#5d615a", lineHeight: 1.75, maxWidth: 560, margin: "0 auto 40px" }}>
-            Practice taking a clinical history by interviewing AI-simulated patients. Ask the right questions, gather symptoms, reach your diagnosis — then explore the clinical findings in depth.
+            Ask questions, review the image, and learn step by step.
           </p>
 
           <div style={{ display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap" }}>
@@ -61,7 +59,7 @@ export function Landing() {
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))", gap: 1, background: "rgba(255,255,255,0.08)", borderRadius: 12, overflow: "hidden" }}>
             {[
               { icon: Users, step: "1", title: "Meet your patient", desc: "A simulated patient presents with a chief complaint. Read their opening statement.", color: "#af1d27" },
-              { icon: MessageCircle, step: "2", title: "Ask your questions", desc: "Interview the patient. Probe symptoms, history, lifestyle — just like a real consultation.", color: "#2499a9" },
+              { icon: MessageCircle, step: "2", title: "Ask your questions", desc: "Interview the patient. Probe symptoms, history, lifestyle - just like a real consultation.", color: "#2499a9" },
               { icon: Search, step: "3", title: "Make your diagnosis", desc: "Once you've gathered enough information, submit your clinical diagnosis.", color: "#ed9822" },
               { icon: Image, step: "4", title: "Explore the findings", desc: "Correct diagnosis unlocks the clinical image. Discuss findings in depth with the patient.", color: "#42a083" },
             ].map(({ icon: Icon, step, title, desc, color }) => (
@@ -109,7 +107,7 @@ export function Landing() {
                   <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(0,0,0,0.5), transparent)" }} />
                   <div style={{ position: "absolute", bottom: 10, left: 12, color: "#fff" }}>
                     <div style={{ fontSize: 14, fontWeight: 600 }}>{c.patient.name}</div>
-                    <div style={{ fontSize: 11, opacity: 0.85 }}>{c.patient.age}y · {c.patient.gender} · {c.setting}</div>
+                    <div style={{ fontSize: 11, opacity: 0.85 }}>{c.patient.age}y | {c.patient.gender} | {c.setting}</div>
                   </div>
                   <div style={{ position: "absolute", top: 10, right: 10, padding: "3px 9px", background: st.bg, borderRadius: 20, fontSize: 10, color: st.color, fontWeight: 600 }}>
                     {st.label}
