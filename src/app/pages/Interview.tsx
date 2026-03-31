@@ -7,7 +7,7 @@ import {
 } from "lucide-react";
 import { CASES, type PatientCase } from "../data/cases";
 
-// ── Types ──────────────────────────────────────────────────────────────────────
+// Types
 
 type MessageRole = "patient" | "student" | "system";
 
@@ -21,7 +21,7 @@ interface Message {
 
 type Phase = "interview" | "diagnosed";
 
-// ── Helpers ────────────────────────────────────────────────────────────────────
+// Helpers
 
 function generateId() {
   return Math.random().toString(36).slice(2);
@@ -54,7 +54,7 @@ function getPostDiagnosisResponse(patientCase: PatientCase, input: string): stri
   return patientCase.postDiagnosisDefault;
 }
 
-// ── Category colors ───────────────────────────────────────────────────────────
+// Category colors
 
 const CATEGORY_STYLE: Record<string, { color: string; bg: string }> = {
   "Chief Complaint": { color: "#af1d27", bg: "#fdf2f3" },
@@ -64,7 +64,7 @@ const CATEGORY_STYLE: Record<string, { color: string; bg: string }> = {
   "Examination Finding": { color: "#42a083", bg: "#e8f4f1" },
 };
 
-// ── Main Component ────────────────────────────────────────────────────────────
+// Main component
 
 export function Interview() {
   const { caseId } = useParams<{ caseId: string }>();
@@ -82,6 +82,7 @@ export function Interview() {
   const [showCluesPanel, setShowCluesPanel] = useState(true);
   const [imageZoom, setImageZoom] = useState(1);
   const [imageModalOpen, setImageModalOpen] = useState(false);
+  const [showImagePanel, setShowImagePanel] = useState(false);
   const [isPatientTyping, setIsPatientTyping] = useState(false);
   const [showHint, setShowHint] = useState(false);
   const [messageCount, setMessageCount] = useState(0);
@@ -122,7 +123,7 @@ export function Interview() {
     );
   }
 
-  // ── Actions ────────────────────────────────────────────────────────────────
+  // Actions
 
   const sendMessage = () => {
     if (!input.trim() || isPatientTyping) return;
@@ -160,7 +161,7 @@ export function Interview() {
       // Correct!
       const successMsg: Message = {
         id: generateId(), role: "system",
-        text: `✓ Correct diagnosis: ${patientCase.condition}. Well done — you've identified the condition. The clinical image is now available. Continue your consultation to explore the findings in depth.`,
+        text: `Correct diagnosis: ${patientCase.condition}. Well done - you've identified the condition. The clinical image is now available. Continue your consultation to explore the findings in depth.`,
         timestamp: new Date(),
       };
       setMessages(prev => [...prev, successMsg]);
@@ -169,6 +170,7 @@ export function Interview() {
         setIsPatientTyping(false);
         setMessages(prev => [...prev, { id: generateId(), role: "patient", text: patientCase.correctDiagnosisResponse, timestamp: new Date() }]);
         setPhase("diagnosed");
+        setShowImagePanel(false);
         setShowDiagnosisInput(false);
         setDiagnosisInput("");
       }, 1200);
@@ -193,13 +195,17 @@ export function Interview() {
     setWrongAttempts(0);
     setDiagnosisError("");
     setMessageCount(0);
+    setShowImagePanel(false);
+    setImageZoom(1);
+    setImageModalOpen(false);
   };
 
   const revealedClues = patientCase.clues.filter(cl => revealedClueIds.has(cl.id));
   const unrevealed = patientCase.clues.filter(cl => !revealedClueIds.has(cl.id));
   const cluePercent = Math.round((revealedClues.length / patientCase.clues.length) * 100);
+  const isImageStudyOpen = phase === "diagnosed" && showImagePanel;
 
-  // ── Render ─────────────────────────────────────────────────────────────────
+  // Render
 
   return (
     <div style={{ fontFamily: "var(--font-ui)", height: "calc(100vh - 60px)", display: "flex", flexDirection: "column", background: "#f7f7f6", overflow: "hidden" }}>
@@ -210,11 +216,11 @@ export function Interview() {
           style={{ display: "flex", alignItems: "center", gap: 5, padding: "5px 10px", border: "1px solid #e0e0e0", borderRadius: 6, background: "#fff", color: "#5d615a", fontSize: 12, cursor: "pointer", fontFamily: "var(--font-ui)" }}>
           <ArrowLeft size={13} /> Cases
         </button>
-        <span style={{ color: "#e0e0e0" }}>›</span>
+        <span style={{ color: "#e0e0e0" }}>{">"}</span>
         <div style={{ display: "flex", align: "center", gap: 8 }}>
           <img src={patientCase.patient.portrait} alt="" style={{ width: 24, height: 24, borderRadius: "50%", objectFit: "cover", objectPosition: "top" }} />
           <span style={{ fontSize: 13, fontWeight: 600, color: "#1a1a1a" }}>{patientCase.patient.name}, {patientCase.patient.age}</span>
-          <span style={{ fontSize: 12, color: "#5d615a" }}>· {patientCase.setting}</span>
+          <span style={{ fontSize: 12, color: "#5d615a" }}>| {patientCase.setting}</span>
         </div>
 
         {/* Phase indicator */}
@@ -245,18 +251,19 @@ export function Interview() {
       {/* Main layout */}
       <div style={{ flex: 1, display: "flex", overflow: "hidden" }}>
 
-        {/* ── LEFT COLUMN: Clinical notes sidebar (pre-diagnosis) or Image panel (post-diagnosis) ── */}
-        {phase === "diagnosed" ? (
+        {/* Left column: notes before diagnosis, image after it is opened */}
+        {isImageStudyOpen ? (
           /* POST-DIAGNOSIS: Image panel */
           <div style={{ width: "44%", flexShrink: 0, display: "flex", flexDirection: "column", borderRight: "1px solid #e0e0e0", background: "#fff", overflow: "hidden" }}>
             {/* Image toolbar */}
             <div style={{ padding: "10px 16px", borderBottom: "1px solid #e0e0e0", display: "flex", alignItems: "center", justifyContent: "space-between", flexShrink: 0, background: "#fafafa" }}>
               <div>
-                <span style={{ fontSize: 11, fontWeight: 600, color: "#42a083", letterSpacing: "0.08em", textTransform: "uppercase", marginRight: 8 }}>Diagnosis Confirmed</span>
+                <span style={{ fontSize: 11, fontWeight: 600, color: "#42a083", letterSpacing: "0.08em", textTransform: "uppercase", marginRight: 8 }}>Image Study View</span>
                 <span style={{ fontSize: 12, color: "#1a1a1a", fontWeight: 600 }}>{patientCase.condition}</span>
               </div>
               <div style={{ display: "flex", gap: 5 }}>
                 {[
+                  { icon: EyeOff, label: "Hide image", onClick: () => setShowImagePanel(false) },
                   { icon: ZoomIn, label: "Zoom in", onClick: () => setImageZoom(z => Math.min(z + 0.3, 3)) },
                   { icon: ZoomOut, label: "Zoom out", onClick: () => setImageZoom(z => Math.max(z - 0.3, 0.6)) },
                   { icon: RotateCcw, label: "Reset", onClick: () => setImageZoom(1) },
@@ -297,7 +304,7 @@ export function Interview() {
             {/* Revealed findings summary */}
             <div style={{ padding: "10px 16px", borderTop: "1px solid #e0e0e0", background: "#fff", flexShrink: 0, maxHeight: 140, overflowY: "auto" }}>
               <div style={{ fontSize: 11, fontWeight: 600, color: "#5d615a", letterSpacing: "0.07em", textTransform: "uppercase", marginBottom: 8 }}>
-                Clinical Findings — {revealedClues.length}/{patientCase.clues.length} uncovered
+                Clinical Findings - {revealedClues.length}/{patientCase.clues.length} uncovered
               </div>
               <div style={{ display: "flex", flexWrap: "wrap", gap: 5 }}>
                 {patientCase.clues.map(cl => {
@@ -315,7 +322,7 @@ export function Interview() {
             </div>
           </div>
         ) : (
-          /* PRE-DIAGNOSIS: Clinical notes panel */
+          /* Notes panel */
           <div style={{ width: "300px", flexShrink: 0, borderRight: "1px solid #e0e0e0", background: "#ffffff", display: "flex", flexDirection: "column", overflow: "hidden" }}>
             {/* Patient card */}
             <div style={{ position: "relative", flexShrink: 0 }}>
@@ -324,8 +331,8 @@ export function Interview() {
               <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(0,0,0,0.75) 0%, transparent 50%)" }} />
               <div style={{ position: "absolute", bottom: 14, left: 16 }}>
                 <div style={{ fontSize: 17, fontWeight: 700, color: "#fff", marginBottom: 2 }}>{patientCase.patient.name}</div>
-                <div style={{ fontSize: 12, color: "rgba(255,255,255,0.85)" }}>{patientCase.patient.age} yrs · {patientCase.patient.gender}</div>
-                <div style={{ fontSize: 11, color: "rgba(255,255,255,0.7)" }}>{patientCase.patient.occupation} · {patientCase.setting}</div>
+                <div style={{ fontSize: 12, color: "rgba(255,255,255,0.85)" }}>{patientCase.patient.age} yrs | {patientCase.patient.gender}</div>
+                <div style={{ fontSize: 11, color: "rgba(255,255,255,0.7)" }}>{patientCase.patient.occupation} | {patientCase.setting}</div>
               </div>
               <div style={{ position: "absolute", top: 12, right: 12, padding: "3px 10px", background: "rgba(0,0,0,0.55)", borderRadius: 20, fontSize: 10, color: "#fff" }}>
                 {patientCase.system}
@@ -381,7 +388,7 @@ export function Interview() {
                       <div style={{ fontSize: 11, color: "#9e9e9e", marginBottom: 6, fontStyle: "italic" }}>Still to uncover:</div>
                       {unrevealed.map(cl => (
                         <div key={cl.id} style={{ marginBottom: 5, padding: "7px 10px", background: "#f7f7f6", borderRadius: 8, borderLeft: "3px solid #e0e0e0" }}>
-                          <div style={{ fontSize: 12, color: "#b0b0b0" }}>Ask about {cl.category.toLowerCase()}…</div>
+                          <div style={{ fontSize: 12, color: "#b0b0b0" }}>Ask about {cl.category.toLowerCase()}...</div>
                         </div>
                       ))}
                     </div>
@@ -398,7 +405,7 @@ export function Interview() {
                   </button>
                   {showHint && unrevealed.length > 0 && (
                     <div style={{ marginTop: 8, padding: "8px 12px", background: "#fff5e6", borderRadius: 7, fontSize: 12, color: "#7f4a00", lineHeight: 1.6 }}>
-                      💡 Try asking about <strong>{unrevealed[0].category.toLowerCase()}</strong> — you haven't covered that area yet.
+                      Tip: try asking about <strong>{unrevealed[0].category.toLowerCase()}</strong> - you haven't covered that area yet.
                     </div>
                   )}
                 </div>
@@ -418,18 +425,30 @@ export function Interview() {
 
             {/* Diagnosis button area */}
             <div style={{ padding: "12px 16px", borderTop: "1px solid #e0e0e0", flexShrink: 0 }}>
-              {!showDiagnosisInput ? (
+              {phase === "diagnosed" ? (
+                <div>
+                  <div style={{ fontSize: 12, fontWeight: 600, color: "#1a1a1a", marginBottom: 6 }}>Image study ready</div>
+                  <p style={{ fontSize: 12, color: "#5d615a", lineHeight: 1.6, marginBottom: 10 }}>
+                    Open the case image to review the finding on the left while you continue the discussion on the right.
+                  </p>
+                  <button onClick={() => setShowImagePanel(true)}
+                    style={{ width: "100%", padding: "10px 0", background: "#af1d27", color: "#fff", border: "none", borderRadius: 8, fontSize: 13, fontWeight: 600, cursor: "pointer", fontFamily: "var(--font-ui)", display: "flex", alignItems: "center", justifyContent: "center", gap: 7 }}>
+                    <Eye size={15} />
+                    Open case image
+                  </button>
+                </div>
+              ) : !showDiagnosisInput ? (
                 <button onClick={() => { setShowDiagnosisInput(true); setDiagnosisError(""); }}
                   disabled={messageCount < 3}
                   style={{ width: "100%", padding: "10px 0", background: messageCount >= 3 ? "#af1d27" : "#f4f4f4", color: messageCount >= 3 ? "#fff" : "#c0c0c0", border: "none", borderRadius: 8, fontSize: 13, fontWeight: 600, cursor: messageCount >= 3 ? "pointer" : "not-allowed", fontFamily: "var(--font-ui)", display: "flex", alignItems: "center", justifyContent: "center", gap: 7 }}>
                   <Stethoscope size={15} />
-                  {messageCount < 3 ? "Ask more questions first…" : "Submit my diagnosis"}
+                  {messageCount < 3 ? "Ask more questions first..." : "Submit my diagnosis"}
                 </button>
               ) : (
                 <div>
                   <div style={{ fontSize: 12, fontWeight: 600, color: "#1a1a1a", marginBottom: 8 }}>Your diagnosis:</div>
                   <input type="text" value={diagnosisInput} onChange={e => { setDiagnosisInput(e.target.value); setDiagnosisError(""); }}
-                    placeholder="e.g. Acute appendicitis…" autoFocus
+                    placeholder="e.g. Acute appendicitis..." autoFocus
                     onKeyDown={e => { if (e.key === "Enter") submitDiagnosis(); if (e.key === "Escape") { setShowDiagnosisInput(false); setDiagnosisError(""); } }}
                     style={{ width: "100%", padding: "9px 12px", border: "1.5px solid #e0e0e0", borderRadius: 7, fontSize: 14, fontFamily: "var(--font-ui)", outline: "none", boxSizing: "border-box", marginBottom: 8 }}
                     onFocus={e => (e.currentTarget.style.borderColor = "#af1d27")}
@@ -451,7 +470,7 @@ export function Interview() {
                   </div>
                   {wrongAttempts > 0 && (
                     <div style={{ marginTop: 8, fontSize: 11, color: "#5d615a" }}>
-                      {wrongAttempts} incorrect attempt{wrongAttempts > 1 ? "s" : ""} — try to be more specific.
+                      {wrongAttempts} incorrect attempt{wrongAttempts > 1 ? "s" : ""} - try to be more specific.
                     </div>
                   )}
                 </div>
@@ -460,7 +479,7 @@ export function Interview() {
           </div>
         )}
 
-        {/* ── RIGHT COLUMN: Chat Interface ── */}
+        {/* Right column: chat interface */}
         <div style={{ flex: 1, display: "flex", flexDirection: "column", overflow: "hidden" }}>
           {/* Chat header */}
           <div style={{ padding: "12px 20px", borderBottom: "1px solid #e0e0e0", background: "#ffffff", display: "flex", alignItems: "center", gap: 10, flexShrink: 0 }}>
@@ -468,7 +487,7 @@ export function Interview() {
             <div>
               <div style={{ fontSize: 14, fontWeight: 600, color: "#1a1a1a" }}>{patientCase.patient.name}</div>
               <div style={{ fontSize: 11, color: "#5d615a" }}>
-                {phase === "interview" ? "Awaiting your questions — interview in progress" : `Diagnosis confirmed: ${patientCase.condition} · Continue discussing the findings`}
+                {phase === "interview" ? "Awaiting your questions - interview in progress" : isImageStudyOpen ? `Image study open: ${patientCase.condition} | Discuss what you see` : `Diagnosis confirmed: ${patientCase.condition} | Open the image from the left to start reviewing it`}
               </div>
             </div>
             {phase === "diagnosed" && (
@@ -489,7 +508,7 @@ export function Interview() {
 
             {phase === "diagnosed" && (
               <div style={{ padding: "10px 14px", background: "#e8f4f1", border: "1px solid #b8ddd5", borderRadius: 8, fontSize: 13, color: "#2d7a60", lineHeight: 1.6 }}>
-                <strong>Diagnosis confirmed.</strong> The clinical image is now visible on the left. Continue your consultation — ask the patient about their concerns, explain the condition, or explore management options.
+                <strong>Diagnosis confirmed.</strong> Open the image on the left to turn this into a study workspace, then keep asking questions about the finding, diagnosis, or next steps.
               </div>
             )}
 
@@ -579,7 +598,7 @@ export function Interview() {
               onFocusCapture={e => (e.currentTarget.style.borderColor = "#af1d27")}
               onBlurCapture={e => (e.currentTarget.style.borderColor = "#e0e0e0")}>
               <textarea ref={inputRef} value={input} onChange={e => setInput(e.target.value)}
-                placeholder={phase === "interview" ? "Ask the patient a question… (e.g. 'Where exactly is the pain? Does anything make it better or worse?')" : "Continue the consultation — ask about treatment, concerns, or next steps…"}
+                placeholder={phase === "interview" ? "Ask the patient a question... (e.g. 'Where exactly is the pain? Does anything make it better or worse?')" : "Ask about the image, the key finding, or the diagnosis to keep the study discussion going..."}
                 rows={2}
                 style={{ flex: 1, resize: "none", border: "none", outline: "none", fontSize: 14, color: "#1a1a1a", fontFamily: "var(--font-ui)", background: "transparent", lineHeight: 1.5 }}
                 onKeyDown={e => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sendMessage(); } }} />
@@ -589,9 +608,9 @@ export function Interview() {
               </button>
             </div>
             <div style={{ fontSize: 11, color: "#9e9e9e", marginTop: 6 }}>
-              <kbd style={{ padding: "1px 5px", background: "#f0f0f0", borderRadius: 3, border: "1px solid #e0e0e0", fontSize: 10 }}>Enter</kbd> to send ·{" "}
+              <kbd style={{ padding: "1px 5px", background: "#f0f0f0", borderRadius: 3, border: "1px solid #e0e0e0", fontSize: 10 }}>Enter</kbd> to send |{" "}
               <kbd style={{ padding: "1px 5px", background: "#f0f0f0", borderRadius: 3, border: "1px solid #e0e0e0", fontSize: 10 }}>Shift+Enter</kbd> new line
-              {phase === "interview" && <> · Gather enough findings, then submit your diagnosis</>}
+              {phase === "interview" && <> | Gather enough findings, then submit your diagnosis</>}
             </div>
           </div>
         </div>
