@@ -28,9 +28,9 @@ Tech constraints:
 - Use reusable components and a clean design system that a React TypeScript team can implement easily.
 
 Brand and style:
-Use CGU-inspired brand styling.
+Use a calm academic brand style.
 Primary brand colors:
-- CGU Red: #af1d27
+- Primary Red: #af1d27
 - Dark Red: #7f1118
 - Gray: #5d615a
 - Light Gray: #e0e0e0
@@ -88,7 +88,7 @@ Purpose:
 - Allow student to choose a module or start a case
 
 Content:
-- Top nav with small CGU-branded header area
+- Top nav with a small institutional header area
 - App name: something like “Anatomy Tutor” or “Body Learning Assistant”
 - Subheading: “Study guided anatomy questions with fixed visuals and source-backed AI explanations.”
 - Primary CTA: “Start learning”
@@ -100,7 +100,7 @@ Content:
 Style:
 - Clean hero section, not marketing-heavy
 - Use white or very light gray background
-- Small amount of CGU red for buttons and emphasis
+- Small amount of brand red for buttons and emphasis
 - Should feel scholarly and calm
 
 SCREEN 2: Module / Case selection
@@ -400,7 +400,7 @@ Please generate:
 8) polished but simple prototype links between main screens.
 
 Name the project something like:
-“CGU Anatomy Tutor MVP”
+“Clinical Anatomy Tutor MVP”
 
 Name the key frames clearly:
 - 01 Landing

@@ -145,7 +145,7 @@ export function Progress() {
             <div style={{ display: "flex", gap: 8 }}>
               <BookOpen size={14} color="#005a93" style={{ marginTop: 2, flexShrink: 0 }} />
               <p style={{ fontSize: 12, color: "#005a93", lineHeight: 1.7 }}>
-                Progress is tracked locally during your session. Your formal OSCE assessment is managed separately through CGU's clinical education platform.
+                Progress is tracked locally during your session. Your formal OSCE assessment is managed separately through your clinical education platform.
               </p>
             </div>
           </div>
