@@ -48,7 +48,7 @@ Secondary accent colors, used sparingly:
 Typography direction:
 - Use a clean academic style inspired by Gotham / Gotham Narrow for UI and interface text.
 - Use a refined serif accent inspired by Mercury for hero headings or section titles only.
-- If exact fonts are unavailable in Figma, choose close substitutes that feel academic, modern, and readable.
+- If exact fonts are unavailable, choose close substitutes that feel academic, modern, and readable.
 - Keep text highly legible. Do not use tiny or stylistic fonts.
 
 Overall design principles:
@@ -388,7 +388,7 @@ Important content philosophy:
 - Suggested prompts and navigation matter more than raw chat freedom
 - The image and question context are the anchors of the experience
 
-Output requested from Figma:
+Requested design deliverables:
 Please generate:
 1) a small design system / UI kit,
 2) desktop screens for all key flows,
